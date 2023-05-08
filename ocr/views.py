@@ -53,7 +53,7 @@ def process_image(image):
     reader = easyocr.Reader(['ko', 'en'], gpu=True)
 
     # Pororo OCR 초기화
-    recognizer = Pororo(task="ocr", lang="ko")
+    # recognizer = Pororo(task="ocr", lang="ko")
 
     # 이미지를 RGB 색상 모드로 변환
     img_array = cv2.imdecode(np.frombuffer(uploaded_image_data, np.uint8), cv2.IMREAD_UNCHANGED)
