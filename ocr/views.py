@@ -33,9 +33,6 @@ def preprocess_image(img):
     # 글자 외곽선 강화
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     img = cv2.filter2D(img, -1, kernel)
-
-    return img
-
     return img
 
 
