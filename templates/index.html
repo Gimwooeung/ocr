@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>OCR 어플리케이션</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="image">이미지 선택:</label>
+            <input type="file" name="image" class="form-control-file" id="image">
+        </div>
+        <button type="submit" class="btn btn-primary">업로드</button>
+    </form>
+
+    {% if uploaded_file_url %}
+        <hr>
+        <h3>입력한 이미지:</h3>
+        <img src="{{ uploaded_file_url }}" class="img-thumbnail" alt="Uploaded Image">
+    {% endif %}
+
+    {% if result %}
+        <hr>
+        <h3>인식 결과:</h3>
+        {% if result_img_data %}
+            <img src="data:image/jpeg;base64,{{ result_img_data }}" class="img-thumbnail" alt="Result Image">
+        {% endif %}
+        <div class="result-box">
+            {% for text in result %}
+                <p>{{ text }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
