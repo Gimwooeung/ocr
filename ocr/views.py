@@ -5,14 +5,12 @@ import base64
 from .models import DrugName,ContraindicatedDrug
 import easyocr
 from difflib import get_close_matches
-# 뽀로로 테스트
 from ocr.pororo.pororo import Pororo
-
+import re
 # 리스트 변수 생성
 matches = []
 recognized_text = []
-
-# 테스트
+ocrr = []
 def process_image(image):
     # 이미지 파일 로드
     uploaded_image_data = image.read()
@@ -51,8 +49,16 @@ def process_image(image):
     # 인식결과를 리스트에 담는과정
     recognized_results = [recognition_result for text, recognition_result in tt]
     recognized_results_flat = [result for sublist in recognized_results for result in sublist]
-    ocr = recognized_results_flat
+    pre = recognized_results_flat
 
+    # 글자 전 처리
+    pattern = r'\(.*?[\)\]\}>\)]|\[.*?[\)\]\}>\)]|\{.*?[\)\]\}>\)]|\<.*?[\)\]\}>\)]'
+    for item in pre:
+        modified_item = re.sub(pattern, '', item)
+        modified_item = modified_item.strip()
+        if modified_item != '':
+            ocrr.append(modified_item)
+    ocr = [x.split('(')[0] if '(' in x else x for x in ocrr]
     # 추가된 부분: 데이터베이스에서 약 이름 불러오기
     drug_names = [drug.drug_name for drug in DrugName.objects.all()]
 
@@ -68,6 +74,11 @@ def process_image(image):
         n = 1
         cutoff = 0.7
         k = ocr[p]
+        if '밀리그람' or '밀리그램' or '일리그람' or '일리그램' in k:
+            k = k.replace('밀리그람', 'mg')
+            k = k.replace('밀리그램', 'mg')
+            k = k.replace('일리그람', 'mg')
+            k = k.replace('일리그램', 'mg')
         matches_j = get_close_matches(k, drug_names, n, cutoff)
         if matches_j:
             matched_drugs.extend(matches_j)
