@@ -59,6 +59,8 @@ def process_image(image):
         if modified_item != '':
             ocrr.append(modified_item)
     ocr = [x.split('(')[0] if '(' in x else x for x in ocrr]
+    ocr = [x.split('[')[0] if '[' in x else x for x in ocr]
+
     # 추가된 부분: 데이터베이스에서 약 이름 불러오기
     drug_names = [drug.drug_name for drug in DrugName.objects.all()]
 
