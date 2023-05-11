@@ -10,7 +10,7 @@ from typing import Tuple, Union
 
 import wget
 
-from pororo.tasks.utils.config import CONFIGS
+from ocr.pororo.tasks.utils.config import CONFIGS
 
 DEFAULT_PREFIX = {
     "model": "https://twg.kakaocdn.net/pororo/{lang}/models",

@@ -7,11 +7,11 @@ Pororo task-specific factory class
 
 import logging
 from typing import Optional
-from pororo.tasks.utils.base import PororoTaskBase
+from ocr.pororo.tasks.utils.base import PororoTaskBase
 
 import torch
 
-from pororo.tasks import (
+from ocr.pororo.tasks import (
     PororoOcrFactory,
 )
 

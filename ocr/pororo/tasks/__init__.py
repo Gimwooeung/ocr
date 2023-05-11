@@ -6,9 +6,9 @@ __init__.py for import child .py files
 """
 
 # Utility classes & functions
-import pororo.tasks.utils
-from pororo.tasks.utils.download_utils import download_or_load
-from pororo.tasks.utils.base import (
+import ocr.pororo.tasks.utils
+from ocr.pororo.tasks.utils.download_utils import download_or_load
+from ocr.pororo.tasks.utils.base import (
     PororoBiencoderBase,
     PororoFactoryBase,
     PororoGenerationBase,
@@ -17,4 +17,4 @@ from pororo.tasks.utils.base import (
 )
 
 # Factory classes
-from pororo.tasks.optical_character_recognition import PororoOcrFactory
+from ocr.pororo.tasks.optical_character_recognition import PororoOcrFactory

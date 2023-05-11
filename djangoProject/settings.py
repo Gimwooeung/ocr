@@ -81,8 +81,8 @@ DATABASES = {
         'NAME': 'test',
         'USER': 'root',
         'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'HOST': 'rndcbnu.synology.me',
+        'PORT': '33306',
         'OPTIONS': {
             'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"',
             'charset': 'utf8mb4',

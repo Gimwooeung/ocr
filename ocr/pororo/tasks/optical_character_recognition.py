@@ -2,8 +2,8 @@
 
 from typing import Optional
 
-from pororo.tasks import download_or_load
-from pororo.tasks.utils.base import PororoFactoryBase, PororoSimpleBase
+from ocr.pororo.tasks.utils.download_utils import download_or_load
+from ocr.pororo.tasks.utils.base import PororoFactoryBase, PororoSimpleBase
 
 
 class PororoOcrFactory(PororoFactoryBase):
@@ -76,7 +76,7 @@ class PororoOcrFactory(PororoFactoryBase):
 
         """
         if self.config.n_model == "brainocr":
-            from pororo.models.brainOCR import brainocr
+            from ocr.pororo.models.brainOCR import brainocr
 
             if self.config.lang not in self.get_available_langs():
                 raise ValueError(
