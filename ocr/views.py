@@ -6,11 +6,22 @@ from .models import DrugName,ContraindicatedDrug
 import easyocr
 from difflib import get_close_matches
 from ocr.pororo.pororo import Pororo
-import re
+from ocr.text_preprocessing import TextProcessor
+from ocr.Contraindicated_drug import drugContraindicated
+
+processor = TextProcessor() # 글자유사도 클래스 불러오기
+
 # 리스트 변수 생성
 matches = []
 recognized_text = []
-ocrr = []
+values = []
+
+# 추가된 부분: 데이터베이스에서 약 이름 불러오기
+drug_names = [drug.drug_name for drug in DrugName.objects.all()]
+durg_a = [drug.product_name_a for drug in ContraindicatedDrug.objects.all()]
+durg_b = [drug.product_name_b for drug in ContraindicatedDrug.objects.all()]
+contra = [drug.details for drug in ContraindicatedDrug.objects.all()]
+
 def process_image(image):
     # 이미지 파일 로드
     uploaded_image_data = image.read()
@@ -50,25 +61,7 @@ def process_image(image):
     recognized_results = [recognition_result for text, recognition_result in tt]
     recognized_results_flat = [result for sublist in recognized_results for result in sublist]
     pre = recognized_results_flat
-
-    # 글자 전 처리
-    pattern = r'\(.*?[\)\]\}>\)]|\[.*?[\)\]\}>\)]|\{.*?[\)\]\}>\)]|\<.*?[\)\]\}>\)]'
-    for item in pre:
-        modified_item = re.sub(pattern, '', item)
-        modified_item = modified_item.strip()
-        if modified_item != '':
-            ocrr.append(modified_item)
-    ocr = [x.split('(')[0] if '(' in x else x for x in ocrr]
-    ocr = [x.split('[')[0] if '[' in x else x for x in ocr]
-
-    # 추가된 부분: 데이터베이스에서 약 이름 불러오기
-    drug_names = [drug.drug_name for drug in DrugName.objects.all()]
-
-    print("#")
-    # con = [drug.companya for drug in ContraindicatedDrug.objects.all()]
-    # print("금기약물들",con)
-    # print(drug_names)
-    # 추가된 부분: OCR 결과와 데이터베이스의 약 이름 비교하기
+    ocr = processor.process_ocr(pre)
 
     # 글자유사도
     matched_drugs = []
@@ -95,12 +88,16 @@ def upload_image(request):
         result_img_data, uploaded_image_data, ocr, matched_drugs  = process_image(image)
         # result_img_data, uploaded_image_data, result = process_image(image)
 
-        # 결과값을 렌더링할 때 사용할 context 변수 생성
+        responses = drugContraindicated(matched_drugs)
+        response = set(responses)
+        print("야이가아",response)
+
         context = {
             'uploaded_image_data': base64.b64encode(uploaded_image_data).decode('utf-8'),
             'result_img_data': base64.b64encode(result_img_data).decode('utf-8'),
             'result_data': ocr,
             'matched_drugs': matched_drugs,
+            'response':response
         }
 
         # 결과 이미지 반환
