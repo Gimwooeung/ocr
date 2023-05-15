@@ -8,6 +8,7 @@ from difflib import get_close_matches
 from ocr.pororo.pororo import Pororo
 from ocr.text_preprocessing import TextProcessor
 from ocr.Contraindicated_drug import drugContraindicated
+import time
 
 processor = TextProcessor() # 글자유사도 클래스 불러오기
 
@@ -23,6 +24,7 @@ durg_b = [drug.product_name_b for drug in ContraindicatedDrug.objects.all()]
 contra = [drug.details for drug in ContraindicatedDrug.objects.all()]
 
 def process_image(image):
+    start_time = time.time()  # 메서드 실행 전 시간 측정
     # 이미지 파일 로드
     uploaded_image_data = image.read()
     image.seek(0)  # 파일 커서를 이미지 파일의 시작점으로 이동
@@ -78,6 +80,11 @@ def process_image(image):
         if matches_j:
             matched_drugs.extend(matches_j)
     matched_drugs = list(set(matched_drugs)) # 중복제거
+
+    end_time = time.time()  # 메서드 실행 후 시간 측정
+    execution_time = end_time - start_time  # 실행 시간 계산
+
+    print(f"메서드 실행 시간: {execution_time}초")
     return result_img_data, uploaded_image_data, ocr, matched_drugs
 
 def upload_image(request):
@@ -86,11 +93,9 @@ def upload_image(request):
 
         # 이미지 처리 및 OCR 수행
         result_img_data, uploaded_image_data, ocr, matched_drugs  = process_image(image)
-        # result_img_data, uploaded_image_data, result = process_image(image)
 
         responses = drugContraindicated(matched_drugs)
         response = set(responses)
-        print("야이가아",response)
 
         context = {
             'uploaded_image_data': base64.b64encode(uploaded_image_data).decode('utf-8'),
@@ -101,6 +106,7 @@ def upload_image(request):
         }
 
         # 결과 이미지 반환
-        return render(request, 'result.html', context)
+        # return render(request, 'result.html', context)
+        return render(request, 'Contarindicated.html', context)
 
     return render(request, 'index.html')
