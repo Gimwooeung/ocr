@@ -4,7 +4,8 @@ import numpy as np
 import easyocr
 from ocr.pororo.pororo import Pororo
 from difflib import get_close_matches
-from .models import DrugName,ContraindicatedDrug
+from .models import DrugName, ContraindicatedDrug  # Import Django models
+from . import text_preprocessing  # Import text_preprocessing module from the same directory
 
 # 추가된 부분: 데이터베이스에서 약 이름 불러오기
 drug_names = [drug.drug_name for drug in DrugName.objects.all()]
@@ -16,6 +17,7 @@ class ImageProcessor:
     def __init__(self):
         self.reader = easyocr.Reader(['ko', 'en'], gpu=True)
         self.recognizer = Pororo(task="ocr", lang="ko")
+        self.text_processor = text_preprocessing.TextProcessor()
 
     def process_image(self, image):
         start_time = time.time()  # Measure start time
@@ -45,14 +47,14 @@ class ImageProcessor:
         recognized_results = [recognition_result for text, recognition_result in tt]
         recognized_results_flat = [result for sublist in recognized_results for result in sublist]
         pre = recognized_results_flat
-        ocr = self.process_ocr(pre)
+        ocr = self.text_processor.process_ocr(pre)
 
         matched_drugs = []
         for p in range(len(ocr)):
             n = 1
             cutoff = 0.7
             k = ocr[p]
-            if '밀리그람' or '밀리그램' or '일리그람' or '일리그램' in k:
+            if '밀리그람' in k or '밀리그램' in k or '일리그람' in k or '일리그램' in k:
                 k = k.replace('밀리그람', 'mg')
                 k = k.replace('밀리그램', 'mg')
                 k = k.replace('일리그람', 'mg')
@@ -67,6 +69,7 @@ class ImageProcessor:
 
         print(f"Execution time: {execution_time} seconds")
         return result_img_data, uploaded_image_data, ocr, matched_drugs
+
     def process_image2(self, image):
         start_time = time.time()  # Measure start time
         uploaded_image_data = image.read()
@@ -95,14 +98,14 @@ class ImageProcessor:
         recognized_results = [recognition_result for text, recognition_result in tt]
         recognized_results_flat = [result for sublist in recognized_results for result in sublist]
         pre = recognized_results_flat
-        ocr = self.process_ocr(pre)
+        ocr = self.text_processor.process_ocr(pre)
 
         matched_drugs = []
         for p in range(len(ocr)):
             n = 1
             cutoff = 0.7
             k = ocr[p]
-            if '밀리그람' or '밀리그램' or '일리그람' or '일리그램' in k:
+            if '밀리그람' in k or '밀리그램' in k or '일리그람' in k or '일리그램' in k:
                 k = k.replace('밀리그람', 'mg')
                 k = k.replace('밀리그램', 'mg')
                 k = k.replace('일리그람', 'mg')
@@ -117,8 +120,3 @@ class ImageProcessor:
 
         print(f"Execution time: {execution_time} seconds")
         return result_img_data, uploaded_image_data, ocr, matched_drugs
-
-    def process_ocr(self, ocr):
-        # Process OCR logic
-        # Replace with your implementation
-        return ocr
