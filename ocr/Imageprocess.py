@@ -5,7 +5,7 @@ import easyocr
 from ocr.pororo.pororo import Pororo
 from difflib import get_close_matches
 from .models import DrugName, ContraindicatedDrug  # Import Django models
-from . import text_preprocessing  # Import text_preprocessing module from the same directory
+from . import text_preprocessing
 
 # 추가된 부분: 데이터베이스에서 약 이름 불러오기
 drug_names = [drug.drug_name for drug in DrugName.objects.all()]
