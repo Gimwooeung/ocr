@@ -9,9 +9,7 @@ from . import text_preprocessing
 
 # 추가된 부분: 데이터베이스에서 약 이름 불러오기
 drug_names = [drug.drug_name for drug in DrugName.objects.all()]
-durg_a = [drug.product_name_a for drug in ContraindicatedDrug.objects.all()]
-durg_b = [drug.product_name_b for drug in ContraindicatedDrug.objects.all()]
-contra = [drug.details for drug in ContraindicatedDrug.objects.all()]
+
 
 class ImageProcessor:
     def __init__(self):
