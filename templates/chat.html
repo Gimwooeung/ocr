@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Image Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+
+        #chat-container {
+            width: 1000px;
+            height: 900px;
+            background-color: #fff;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #chatbox {
+            position: relative;
+            height: 803px;
+            padding: 20px;
+            overflow-y: auto;
+            border-bottom: 1px solid #eee;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+        }
+        #chatbox::-webkit-scrollbar { /* WebKit */
+            width: 0;
+            height: 0;
+        }
+        #chat-inputs {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        .image{
+            border: 1px solid #eee;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .message {
+            border: 1px solid #eee;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f7f7f7;
+        }
+
+        .image img {
+            max-width: 400px; /* 이미지 최대 너비 설정 */
+            margin-top: 10px;
+            display: block;
+        }
+
+        #chat-inputs {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #eee;
+            padding: 10px 20px;
+            border-top: 1px solid #ccc;
+        }
+
+        input[type="file"] {
+            padding: 5px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            background-color: #f7f7f7;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chatbox">
+            <div id="loading" style="display: none; text-align: center;">
+                 <img src="https://i.imgur.com/llF5iyg.gif" alt="Loading..." width="50">
+                <p>OCR 판독중...</p>
+            </div>
+            <!-- 이곳에 채팅 메시지가 표시됩니다. -->
+        </div>
+
+        <div id="chat-inputs">
+            <input type="file" id="image1" accept="image/*">
+            <input type="file" id="image2" accept="image/*">
+            <button onclick="uploadImages()">Upload</button>
+        </div>
+    </div>
+
+<script>
+function uploadImages() {
+    let image1 = document.getElementById('image1').files[0];
+    let image2 = document.getElementById('image2').files[0];
+
+    let formData = new FormData();
+    formData.append('image1', image1);
+    formData.append('image2', image2);
+
+    // 로딩 시작
+    document.getElementById('loading').style.display = 'block';
+
+    fetch('/upload/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        let chatbox = document.getElementById('chatbox');
+
+        // 이미지와 결과를 채팅 박스에 추가합니다.
+        let message = `<div class="image">처방전 1: <img src="data:image/png;base64,${data.result_img_data}" alt="Processed Image 1"></div>`;
+        message += `<div class="image">처방전 2: <img src="data:image/png;base64,${data.result_img_data2}" alt="Processed Image 2"></div>`;
+        message += `<div class="message">${data.response.join('<br>')}</div>`;
+
+        chatbox.innerHTML += message;
+
+        // 로딩 완료
+        document.getElementById('loading').style.display = 'none';
+        scrollToBottom();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+
+        // 로딩 완료
+        document.getElementById('loading').style.display = 'none';
+    });
+    function scrollToBottom() {
+    let chatbox = document.getElementById('chatbox');
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+}
+</script>
+</body>
+</html>
