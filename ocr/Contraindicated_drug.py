@@ -22,7 +22,8 @@ def drugContraindicated(drug):
     for drug_pair in contraindicated_drugs:
         response.append(f"{drug_pair.product_name_a}와 {drug_pair.product_name_b}는(은) 병용금기약물입니다. 담당의사와 상의하세요.")
 
-
+    if response == []:
+        response.append("병용금기 약물이 없습니다. 함께 복용하셔도 됩니다.")
 
     end_time = time.time()  # 메서드 실행 후 시간 측정
     execution_time = end_time - start_time  # 실행 시간 계산

@@ -52,7 +52,7 @@ class TextProcessor:
         ocr = [g.replace("'", '') for g in ocr]
         ocr = [g.replace(',', '') for g in ocr]
         ocr = [g.replace('(', '') for g in ocr]
-        ocr = [g.replace('<', '') for g in ocr]
+        ocr = [g.replace(')', '') for g in ocr]
         ocr = [g.replace('<', '') for g in ocr]
         ocr = [g.replace('>', '') for g in ocr]
         return ocr

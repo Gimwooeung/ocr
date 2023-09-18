@@ -1,9 +1,9 @@
 from django.shortcuts import render
 import base64
-from ocr.text_preprocessing import TextProcessor
 from ocr.Contraindicated_drug import drugContraindicated
 from ocr.Imageprocess import ImageProcessor
-processor = TextProcessor() # 글자유사도 클래스 불러오기
+
+
 image_processor = ImageProcessor() # OCR실행
 
 def upload_image(request):
@@ -13,7 +13,7 @@ def upload_image(request):
 
         # 이미지 처리 및 OCR 수행
         result_img_data, uploaded_image_data, ocr, matched_drugs  = image_processor.process_image(image1)
-        result_img_data2, uploaded_image_data2, ocr2, matched_drugs2 = image_processor.process_image2(image2)
+        result_img_data2, uploaded_image_data2, ocr2, matched_drugs2 = image_processor.process_image(image2)
         drugs=matched_drugs+matched_drugs2
         response = drugContraindicated(drugs)
 
